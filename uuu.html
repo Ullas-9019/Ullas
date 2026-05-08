@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ShiftSync Pro Ultimate</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(-45deg,#0f172a,#1e3a8a,#312e81,#0f766e);
+    background-size:400% 400%;
+    animation:bgAnimation 15s ease infinite;
+    color:white;
+    overflow-x:hidden;
+}
+
+@keyframes bgAnimation{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* GLASS EFFECT */
+
+.sidebar,
+.card,
+.widget,
+.login-box,
+.user,
+.record{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 8px 32px rgba(0,0,0,0.35);
+}
+
+/* LOGIN PAGE */
+
+.login-page{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+    background:rgba(0,0,0,0.8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.login-box{
+    width:380px;
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+}
+
+.login-box h1{
+    color:#38bdf8;
+    margin-bottom:10px;
+    font-size:35px;
+}
+
+.login-box input{
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:260px;
+    height:100vh;
+    padding:20px;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    color:#38bdf8;
+    margin-bottom:40px;
+    text-align:center;
+}
+
+.nav-item{
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.4s;
+    background:rgba(255,255,255,0.08);
+}
+
+.nav-item:hover{
+    transform:translateX(10px);
+    background:linear-gradient(135deg,#06b6d4,#3b82f6);
+}
+
+.main{
+    margin-left:270px;
+    padding:25px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+}
+
+.user{
+    padding:15px 25px;
+    border-radius:18px;
+}
+
+#clock{
+    color:#38bdf8;
+    margin-bottom:5px;
+}
+
+.widgets{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.widget{
+    padding:25px;
+    border-radius:22px;
+    transition:0.4s;
+}
+
+.widget:hover{
+    transform:translateY(-8px) scale(1.02);
+}
+
+.widget span{
+    font-size:40px;
+    color:#38bdf8;
+    font-weight:bold;
+}
+
+.card{
+    padding:25px;
+    border-radius:22px;
+    margin-bottom:20px;
+}
+
+.card h2{
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    outline:none;
+}
+
+textarea{
+    resize:none;
+    height:100px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    color:white;
+    font-size:15px;
+    margin-top:10px;
+    font-weight:bold;
+    transition:0.4s;
+    background:linear-gradient(135deg,#06b6d4,#3b82f6);
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(59,130,246,0.4);
+}
+
+.actions{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.export-btn{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+.pdf-btn{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+
+.record{
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:15px;
+    border-left:5px solid #38bdf8;
+}
+
+.record h3{
+    color:#38bdf8;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    margin-top:10px;
+}
+
+.active-status{
+    background:#28c91f;
+}
+
+.critical-status{
+    background:#7a1515;
+}
+
+.delete-btn{
+    background:linear-gradient(135deg,#dc2626,#991b1b);
+}
+
+.toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:linear-gradient(135deg,#06b6d4,#2563eb);
+    padding:15px 20px;
+    border-radius:12px;
+    z-index:999;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table th{
+    background:#2563eb;
+}
+
+table th,
+table td{
+    border:1px solid rgba(255,255,255,0.1);
+    padding:12px;
+    text-align:left;
+}
+
+canvas{
+    background:white;
+    border-radius:12px;
+    padding:10px;
+}
+
+@media(max-width:768px){
+
+.sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+}
+
+.main{
+    margin-left:0;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+
+<div id="loginPage" class="login-page">
+
+    <div class="login-box">
+
+        <h1>ShiftSync Pro</h1>
+
+        <p id="loginTitle">Create Account</p>
+
+        <!-- REGISTER -->
+
+        <div id="registerSection">
+
+            <input type="text"
+            id="registerUsername"
+            placeholder="Create Username">
+
+            <input type="password"
+            id="registerPassword"
+            placeholder="Create Password">
+
+            <button onclick="createAccount()">
+                Create Account
+            </button>
+
+            <br><br>
+
+            <p>
+                Already have account?
+                <span
+                onclick="showLogin()"
+                style="color:#38bdf8;cursor:pointer;">
+                Login
+                </span>
+            </p>
+
+        </div>
+
+        <!-- LOGIN -->
+
+        <div id="loginSection" style="display:none;">
+
+            <input type="text"
+            id="loginUsername"
+            placeholder="Username">
+
+            <input type="password"
+            id="loginPassword"
+            placeholder="Password">
+
+            <button onclick="login()">
+                Login
+            </button>
+
+            <br><br>
+
+            <p>
+                Create new account?
+                <span
+                onclick="showRegister()"
+                style="color:#38bdf8;cursor:pointer;">
+                Register
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">ShiftSync Pro</div>
+
+    <div class="nav-item" onclick="showPage('dashboard')">
+        🏠 Dashboard
+    </div>
+
+    <div class="nav-item" onclick="showPage('shiftFormPage')">
+        📋 Shift Form
+    </div>
+
+    <div class="nav-item" onclick="showPage('analyticsPage')">
+        📊 Analytics
+    </div>
+
+    <div class="nav-item" onclick="showPage('reportsPage')">
+        📁 Reports
+    </div>
+
+    <div class="nav-item" onclick="logout()">
+        🚪 Logout
+    </div>
+
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+
+        <h1>Shift Handoff Dashboard</h1>
+
+        <div class="user">
+
+            <div id="clock"></div>
+
+            <div id="adminInfo">
+                👤 Admin User
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DASHBOARD -->
+
+    <div id="dashboard" class="page active">
+
+        <div class="widgets">
+
+            <div class="widget">
+                <h3>Total Shifts</h3>
+                <span id="totalShifts">0</span>
+            </div>
+
+            <div class="widget">
+                <h3>Critical Alerts</h3>
+                <span id="criticalCount">0</span>
+            </div>
+
+            <div class="widget">
+                <h3>Pending Tasks</h3>
+                <span id="pendingCount">0</span>
+            </div>
+
+            <div class="widget">
+                <h3>Employees</h3>
+                <span id="employeeCount">0</span>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Recent Shift Records</h2>
+
+            <div id="records"></div>
+
+        </div>
+
+    </div>
+
+    <!-- SHIFT FORM -->
+
+    <div id="shiftFormPage" class="page">
+
+        <div class="card">
+
+            <h2>Submit Shift</h2>
+
+            <form id="shiftForm">
+
+                <div class="input-group">
+                    <label>Admin Name</label>
+                    <input type="text" id="adminName" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Admin ID</label>
+                    <input type="text" id="adminId" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Employee Name</label>
+                    <input type="text" id="employee" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Department</label>
+
+                    <select id="department">
+
+                        <option>Hospital</option>
+                        <option>Factory</option>
+                        <option>Restaurant</option>
+                        <option>Security</option>
+
+                    </select>
+
+                </div>
+
+                <div class="input-group">
+                    <label>Shift</label>
+
+                    <select id="shift">
+
+                        <option>Morning</option>
+                        <option>Afternoon</option>
+                        <option>Night</option>
+
+                    </select>
+
+                </div>
+
+                <div class="input-group">
+                    <label>Pending Tasks</label>
+                    <textarea id="tasks"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Critical Alerts</label>
+                    <textarea id="alerts"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Next Shift Employee</label>
+                    <input type="text" id="nextEmployee">
+                </div>
+
+                <button type="submit">
+                    Submit Shift
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- ANALYTICS -->
+
+    <div id="analyticsPage" class="page">
+
+        <div class="card">
+
+            <h2>Shift Analytics</h2>
+
+            <canvas id="shiftChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- REPORTS -->
+
+    <div id="reportsPage" class="page">
+
+        <div class="card">
+
+            <h2>Reports</h2>
+
+            <div class="actions">
+
+                <button class="export-btn" onclick="exportExcel()">
+                    Export Excel
+                </button>
+
+                <button class="pdf-btn" onclick="exportPDF()">
+                    Export PDF
+                </button>
+
+            </div>
+
+            <br>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Shift</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="reportTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* CREATE ACCOUNT */
+
+function createAccount(){
+
+    let username =
+    document.getElementById("registerUsername").value;
+
+    let password =
+    document.getElementById("registerPassword").value;
+
+    if(username === "" || password === ""){
+
+        alert("Please Enter Username And Password");
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        "savedUsername",
+        username
+    );
+
+    localStorage.setItem(
+        "savedPassword",
+        password
+    );
+
+    showToast("Account Created Successfully");
+
+    showLogin();
+
+}
+
+/* LOGIN */
+
+function login(){
+
+    let username =
+    document.getElementById("loginUsername").value;
+
+    let password =
+    document.getElementById("loginPassword").value;
+
+    let savedUsername =
+    localStorage.getItem("savedUsername");
+
+    let savedPassword =
+    localStorage.getItem("savedPassword");
+
+    if(username === savedUsername &&
+       password === savedPassword){
+
+        document.getElementById("loginPage")
+        .style.display = "none";
+
+        document.getElementById("adminInfo")
+        .innerHTML =
+        "👤 " + username;
+
+        showToast("Login Successful");
+
+    }
+
+    else{
+
+        alert("Invalid Username Or Password");
+
+    }
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+    document.getElementById("loginPage")
+    .style.display = "flex";
+
+    document.getElementById("loginUsername").value = "";
+
+    document.getElementById("loginPassword").value = "";
+
+    showLogin();
+
+    showToast("Logged Out Successfully");
+
+}
+
+/* SHOW LOGIN */
+
+function showLogin(){
+
+    document.getElementById("registerSection")
+    .style.display = "none";
+
+    document.getElementById("loginSection")
+    .style.display = "block";
+
+    document.getElementById("loginTitle")
+    .innerHTML = "Admin Login";
+
+}
+
+/* SHOW REGISTER */
+
+function showRegister(){
+
+    document.getElementById("registerSection")
+    .style.display = "block";
+
+    document.getElementById("loginSection")
+    .style.display = "none";
+
+    document.getElementById("loginTitle")
+    .innerHTML = "Create Account";
+
+}
+
+/* CLOCK */
+
+setInterval(function(){
+
+    document.getElementById("clock").innerHTML =
+    new Date().toLocaleTimeString();
+
+},1000);
+
+/* PAGE NAVIGATION */
+
+function showPage(pageId){
+
+    let pages =
+    document.querySelectorAll(".page");
+
+    pages.forEach(function(page){
+
+        page.classList.remove("active");
+
+    });
+
+    document.getElementById(pageId)
+    .classList.add("active");
+
+}
+
+/* STORAGE */
+
+let records =
+JSON.parse(localStorage.getItem("records")) || [];
+
+/* FORM */
+
+document.getElementById("shiftForm")
+.addEventListener("submit",function(e){
+
+    e.preventDefault();
+
+    let record = {
+
+        adminName:
+        document.getElementById("adminName").value,
+
+        adminId:
+        document.getElementById("adminId").value,
+
+        employee:
+        document.getElementById("employee").value,
+
+        department:
+        document.getElementById("department").value,
+
+        shift:
+        document.getElementById("shift").value,
+
+        tasks:
+        document.getElementById("tasks").value,
+
+        alerts:
+        document.getElementById("alerts").value,
+
+        nextEmployee:
+        document.getElementById("nextEmployee").value,
+
+        time:
+        new Date().toLocaleString()
+
+    };
+
+    records.push(record);
+
+    localStorage.setItem(
+        "records",
+        JSON.stringify(records)
+    );
+
+    displayRecords();
+
+    updateChart();
+
+    showToast("Shift Submitted Successfully");
+
+    document.getElementById("shiftForm").reset();
+
+});
+
+/* DISPLAY */
+
+function displayRecords(){
+
+    let container =
+    document.getElementById("records");
+
+    let reportTable =
+    document.getElementById("reportTable");
+
+    container.innerHTML = "";
+    reportTable.innerHTML = "";
+
+    let critical = 0;
+    let pending = 0;
+
+    let employees = [];
+
+    for(let i=records.length-1;i>=0;i--){
+
+        let record = records[i];
+
+        if(record.alerts.trim() !== ""){
+            critical++;
+        }
+
+        if(record.tasks.trim() !== ""){
+            pending++;
+        }
+
+        if(!employees.includes(record.employee)){
+            employees.push(record.employee);
+        }
+
+        let div =
+        document.createElement("div");
+
+        div.classList.add("record");
+
+        let statusClass =
+        record.alerts
+        ? "critical-status"
+        : "active-status";
+
+        let statusText =
+        record.alerts
+        ? "Critical"
+        : "Active";
+
+        div.innerHTML = `
+
+            <h3>${record.employee}</h3>
+
+            <p><strong>Department:</strong>
+            ${record.department}</p>
+
+            <p><strong>Shift:</strong>
+            ${record.shift}</p>
+
+            <p><strong>Tasks:</strong>
+            ${record.tasks}</p>
+
+            <p><strong>Alerts:</strong>
+            ${record.alerts || "No Alerts"}</p>
+
+            <p><strong>Admin:</strong>
+            ${record.adminName}</p>
+
+            <p><strong>Next Employee:</strong>
+            ${record.nextEmployee}</p>
+
+            <div class="status ${statusClass}">
+                ${statusText}
+            </div>
+
+            <p style="margin-top:10px;">
+                ${record.time}
+            </p>
+
+            <button class="delete-btn"
+            onclick="deleteRecord(${i})">
+                Delete
+            </button>
+
+        `;
+
+        container.appendChild(div);
+
+        reportTable.innerHTML += `
+
+            <tr>
+
+                <td>${record.employee}</td>
+                <td>${record.department}</td>
+                <td>${record.shift}</td>
+                <td>${statusText}</td>
+
+            </tr>
+
+        `;
+
+    }
+
+    document.getElementById("totalShifts").innerHTML =
+    records.length;
+
+    document.getElementById("criticalCount").innerHTML =
+    critical;
+
+    document.getElementById("pendingCount").innerHTML =
+    pending;
+
+    document.getElementById("employeeCount").innerHTML =
+    employees.length;
+
+}
+
+/* DELETE */
+
+function deleteRecord(index){
+
+    records.splice(index,1);
+
+    localStorage.setItem(
+        "records",
+        JSON.stringify(records)
+    );
+
+    displayRecords();
+
+    updateChart();
+
+    showToast("Record Deleted");
+
+}
+
+/* TOAST */
+
+function showToast(message){
+
+    let toast =
+    document.createElement("div");
+
+    toast.classList.add("toast");
+
+    toast.innerHTML = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(function(){
+
+        toast.remove();
+
+    },3000);
+
+}
+
+/* EXCEL */
+
+function exportExcel(){
+
+    let worksheet =
+    XLSX.utils.json_to_sheet(records);
+
+    let workbook =
+    XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Shift Reports"
+    );
+
+    XLSX.writeFile(
+        workbook,
+        "Shift_Report.xlsx"
+    );
+
+}
+
+/* PDF */
+
+function exportPDF(){
+
+    const { jsPDF } = window.jspdf;
+
+    let doc = new jsPDF();
+
+    doc.setFontSize(18);
+
+    doc.text("Shift Handoff Report", 14, 20);
+
+    let startY = 35;
+
+    doc.setFillColor(37,99,235);
+
+    doc.rect(10,startY,190,10,'F');
+
+    doc.setTextColor(255,255,255);
+
+    doc.setFontSize(11);
+
+    doc.text("Employee",15,startY+7);
+    doc.text("Department",55,startY+7);
+    doc.text("Shift",100,startY+7);
+    doc.text("Status",135,startY+7);
+    doc.text("Admin",165,startY+7);
+
+    startY += 12;
+
+    doc.setTextColor(0,0,0);
+
+    records.forEach(function(r){
+
+        let status =
+        r.alerts ? "Critical" : "Active";
+
+        doc.rect(10,startY,190,10);
+
+        doc.text(r.employee,15,startY+7);
+        doc.text(r.department,55,startY+7);
+        doc.text(r.shift,100,startY+7);
+        doc.text(status,135,startY+7);
+        doc.text(r.adminName,165,startY+7);
+
+        startY += 10;
+
+        if(startY > 270){
+
+            doc.addPage();
+
+            startY = 20;
+
+        }
+
+    });
+
+    doc.save("Shift_Report.pdf");
+
+}
+
+/* CHART */
+
+let ctx =
+document.getElementById("shiftChart");
+
+let shiftChart =
+new Chart(ctx,{
+
+    type:"bar",
+
+    data:{
+
+        labels:[
+            "Morning",
+            "Afternoon",
+            "Night"
+        ],
+
+        datasets:[{
+
+            label:"Shift Count",
+
+            data:[0,0,0],
+
+            backgroundColor:[
+                "#06b6d4",
+                "#3b82f6",
+                "#8b5cf6"
+            ],
+
+            borderWidth:1
+
+        }]
+
+    },
+
+    options:{
+
+        responsive:true
+
+    }
+
+});
+
+function updateChart(){
+
+    let morning = 0;
+    let afternoon = 0;
+    let night = 0;
+
+    records.forEach(function(r){
+
+        if(r.shift === "Morning"){
+            morning++;
+        }
+
+        else if(r.shift === "Afternoon"){
+            afternoon++;
+        }
+
+        else if(r.shift === "Night"){
+            night++;
+        }
+
+    });
+
+    shiftChart.data.datasets[0].data = [
+        morning,
+        afternoon,
+        night
+    ];
+
+    shiftChart.update();
+
+}
+
+/* INITIAL LOAD */
+
+displayRecords();
+
+updateChart();
+
+</script>
+
+</body>
+</html>
